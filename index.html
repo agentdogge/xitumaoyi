@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Global Social Platforms</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            facebook: '#1877F2',
+            instagram: '#C13584',
+            youtube: '#FF0000',
+            tiktok: '#000000',
+            whatsapp: '#25D366',
+            website: '#165DFF',
+          },
+          fontFamily: {
+            inter: ['Inter', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .card-hover {
+        @apply transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
+      }
+      .btn-facebook {
+        @apply bg-facebook text-white px-4 py-2 rounded-lg transition-all hover:bg-facebook/90 active:scale-95;
+      }
+      .btn-instagram {
+        @apply bg-instagram text-white px-4 py-2 rounded-lg transition-all hover:bg-instagram/90 active:scale-95;
+      }
+      .btn-youtube {
+        @apply bg-youtube text-white px-4 py-2 rounded-lg transition-all hover:bg-youtube/90 active:scale-95;
+      }
+      .btn-tiktok {
+        @apply bg-tiktok text-white px-4 py-2 rounded-lg transition-all hover:bg-tiktok/90 active:scale-95;
+      }
+      .btn-whatsapp {
+        @apply bg-whatsapp text-white px-4 py-2 rounded-lg transition-all hover:bg-whatsapp/90 active:scale-95;
+      }
+      .btn-website {
+        @apply bg-website text-white px-4 py-2 rounded-lg transition-all hover:bg-website/90 active:scale-95;
+      }
+      .glass-effect {
+        @apply backdrop-blur-xl bg-white/10 border border-white/10 hover:bg-white/20 transition-all duration-300;
+      }
+      .text-light {
+        @apply text-gray-100;
+      }
+      .text-dark {
+        @apply text-gray-800;
+      }
+    }
+  </style>
+</head>
+<body class="font-inter min-h-screen" id="bodyElement">
+  <main class="container mx-auto px-4 py-8">
+    <!-- 页面标题 -->
+    <section class="text-center mb-12" id="pageTitle">
+      <h2 class="text-[clamp(1.8rem,4vw,3rem)] font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-website to-blue-400">
+        After-sales Service Card
+      </h2>
+      <p class="text-gray-300 max-w-2xl mx-auto text-lg">
+        You can use this card to quickly find all of our social media accounts
+      </p>
+    </section>
+    
+    <!-- 平台网格 -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="socialPlatforms">
+      <!-- Facebook -->
+      <div class="social-card glass-effect rounded-xl shadow-lg overflow-hidden card-hover" data-category="Social Networks">
+        <div class="h-3 bg-facebook"></div>
+        <div class="p-6">
+          <div class="flex justify-between items-start mb-4">
+            <div class="w-12 h-12 rounded-lg bg-facebook/20 flex items-center justify-center">
+              <i class="fa fa-facebook text-facebook text-2xl"></i>
+            </div>
+            <span class="bg-facebook/20 text-facebook text-xs px-2 py-1 rounded-full">Social Network</span>
+          </div>
+          <h3 class="text-xl font-bold mb-2 text-content">Facebook</h3>
+          <p class="text-gray-300 text-sm h-12 mb-4 overflow-hidden text-content">The world's largest social network with over 2.8 billion monthly active users.</p>
+          <a href="https://www.facebook.com/xitumaoyiebike/" target="_blank" class="block w-full text-center btn-facebook">
+            Find us
+          </a>
+        </div>
+      </div>
+      
+      <!-- Instagram -->
+      <div class="social-card glass-effect rounded-xl shadow-lg overflow-hidden card-hover" data-category="Media Sharing">
+        <div class="h-3 bg-instagram"></div>
+        <div class="p-6">
+          <div class="flex justify-between items-start mb-4">
+            <div class="w-12 h-12 rounded-lg bg-instagram/20 flex items-center justify-center">
+              <i class="fa fa-instagram text-instagram text-2xl"></i>
+            </div>
+            <span class="bg-instagram/20 text-instagram text-xs px-2 py-1 rounded-full">Media Sharing</span>
+          </div>
+          <h3 class="text-xl font-bold mb-2 text-content">Instagram</h3>
+          <p class="text-gray-300 text-sm h-12 mb-4 overflow-hidden text-content">A photo and video sharing platform popular among younger audiences.</p>
+          <a href="https://www.instagram.com/xitumaoyiebike/" target="_blank" class="block w-full text-center btn-instagram">
+            Find us
+          </a>
+        </div>
+      </div>
+      
+      <!-- YouTube -->
+      <div class="social-card glass-effect rounded-xl shadow-lg overflow-hidden card-hover" data-category="Media Sharing">
+        <div class="h-3 bg-youtube"></div>
+        <div class="p-6">
+          <div class="flex justify-between items-start mb-4">
+            <div class="w-12 h-12 rounded-lg bg-youtube/20 flex items-center justify-center">
+              <i class="fa fa-youtube-play text-youtube text-2xl"></i>
+            </div>
+            <span class="bg-youtube/20 text-youtube text-xs px-2 py-1 rounded-full">Media Sharing</span>
+          </div>
+          <h3 class="text-xl font-bold mb-2 text-content">YouTube</h3>
+          <p class="text-gray-300 text-sm h-12 mb-4 overflow-hidden text-content">The world's largest video-sharing platform with billions of users.</p>
+          <a href="https://www.youtube.com/@Xitumaoyiebike" target="_blank" class="block w-full text-center btn-youtube">
+            Find us
+          </a>
+        </div>
+      </div>
+
+      <!-- TikTok -->
+      <div class="social-card glass-effect rounded-xl shadow-lg overflow-hidden card-hover" data-category="Social Networks">
+        <div class="h-3 bg-tiktok"></div>
+        <div class="p-6">
+          <div class="flex justify-between items-start mb-4">
+            <div class="w-12 h-12 rounded-lg bg-gray-700 flex items-center justify-center">
+              <i class="fa fa-music text-white text-2xl"></i>
+            </div>
+            <span class="bg-gray-700 text-white text-xs px-2 py-1 rounded-full">Social Network</span>
+          </div>
+          <h3 class="text-xl font-bold mb-2 text-content">TikTok</h3>
+          <p class="text-gray-300 text-sm h-12 mb-4 overflow-hidden text-content">A short - form video sharing social networking service.</p>
+          <a href="https://www.tiktok.com/@xitumaoyiebike" target="_blank" class="block w-full text-center bg-gray-700 text-white px-4 py-2 rounded-lg transition-all hover:bg-gray-600 active:scale-95">
+            Find us
+          </a>
+        </div>
+      </div>
+
+      <!-- WhatsApp -->
+      <div class="social-card glass-effect rounded-xl shadow-lg overflow-hidden card-hover" data-category="Social Networks">
+        <div class="h-3 bg-whatsapp"></div>
+        <div class="p-6">
+          <div class="flex justify-between items-start mb-4">
+            <div class="w-12 h-12 rounded-lg bg-whatsapp/20 flex items-center justify-center">
+              <i class="fa fa-whatsapp text-whatsapp text-2xl"></i>
+            </div>
+            <span class="bg-whatsapp/20 text-whatsapp text-xs px-2 py-1 rounded-full">Social Network</span>
+          </div>
+          <h3 class="text-xl font-bold mb-2 text-content">WhatsApp</h3>
+          <p class="text-gray-300 text-sm h-12 mb-4 overflow-hidden text-content">Our Phone Number +1（806）5598952.</p>
+          <a href="https://wa.me/your-phone-number" target="_blank" class="block w-full text-center btn-whatsapp">
+            Find us
+          </a>
+        </div>
+      </div>
+
+      <!-- 独立站 -->
+      <div class="social-card glass-effect rounded-xl shadow-lg overflow-hidden card-hover" data-category="Independent Website">
+        <div class="h-3 bg-website"></div>
+        <div class="p-6">
+          <div class="flex justify-between items-start mb-4">
+            <div class="w-12 h-12 rounded-lg bg-website/20 flex items-center justify-center">
+              <i class="fa fa-globe text-website text-2xl"></i>
+            </div>
+            <span class="bg-website/20 text-website text-xs px-2 py-1 rounded-full">Independent Website</span>
+          </div>
+          <h3 class="text-xl font-bold mb-2 text-content">Independent Website</h3>
+          <p class="text-gray-300 text-sm h-12 mb-4 overflow-hidden text-content">https://www.xitumaoyiebike.com.</p>
+          <a href="https://www.xitumaoyiebike.com" target="_blank" class="block w-full text-center btn-website">
+            Find us
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script>
+    // 定义图片数组，使用示例图片URL
+    const backgroundImages = [
+      'https://picsum.photos/id/1018/1920/1080', // 明亮风景
+      'https://picsum.photos/id/1015/1920/1080', // 黑暗风景
+      'https://picsum.photos/id/1019/1920/1080', // 明亮建筑
+      'https://picsum.photos/id/1039/1920/1080', // 黑暗自然
+      'https://picsum.photos/id/1040/1920/1080', // 明亮自然
+      'https://picsum.photos/id/1059/1920/1080', // 黑暗城市
+      'https://picsum.photos/id/1076/1920/1080', // 明亮城市
+      'https://picsum.photos/id/1074/1920/1080', // 黑暗山脉
+    ];
+
+    // 随机选择一张图片
+    const randomIndex = Math.floor(Math.random() * backgroundImages.length);
+    const randomImage = backgroundImages[randomIndex];
+
+    // 设置背景图
+    const bodyElement = document.getElementById('bodyElement');
+    bodyElement.style.backgroundImage = `url('${randomImage}')`;
+    bodyElement.style.backgroundSize = 'cover';
+    bodyElement.style.backgroundPosition = 'center';
+    bodyElement.style.backgroundAttachment = 'fixed'; // 固定背景图，使滚动时效果更好
+    
+    // 创建一个临时图像元素来分析亮度
+    const img = new Image();
+    img.src = randomImage;
+    
+    // 图像加载完成后分析亮度
+    img.onload = function() {
+      // 创建一个画布来分析图像
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      
+      // 设置画布大小为图像的一小部分，以提高性能
+      const sampleSize = 100;
+      canvas.width = sampleSize;
+      canvas.height = sampleSize;
+      
+      // 绘制图像到画布
+      ctx.drawImage(img, 0, 0, sampleSize, sampleSize);
+      
+      // 获取图像数据
+      const imageData = ctx.getImageData(0, 0, sampleSize, sampleSize);
+      const data = imageData.data;
+      
+      // 计算平均亮度
+      let totalBrightness = 0;
+      const pixelCount = sampleSize * sampleSize;
+      
+      for (let i = 0; i < data.length; i += 4) {
+        // 使用感知亮度公式计算每个像素的亮度
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+        const brightness = 0.299 * r + 0.587 * g + 0.114 * b;
+        totalBrightness += brightness;
+      }
+      
+      // 计算平均亮度值 (0-255)
+      const averageBrightness = totalBrightness / pixelCount;
+      
+      // 根据平均亮度决定文本颜色
+      const isLightBackground = averageBrightness > 128;
+      
+      // 应用文本颜色
+      applyTextColor(isLightBackground);
+      
+      // 调整卡片透明度
+      adjustCardOpacity(isLightBackground);
+    };
+    
+    // 应用文本颜色
+    function applyTextColor(isLightBackground) {
+      const textElements = document.querySelectorAll('.text-content');
+      const pageTitle = document.getElementById('pageTitle').querySelectorAll('p');
+      
+      // 根据背景亮度设置文本颜色
+      const textClass = isLightBackground ? 'text-dark' : 'text-light';
+      
+      // 应用到卡片文本
+      textElements.forEach(element => {
+        element.classList.remove('text-gray-300', 'text-gray-800', 'text-gray-100');
+        element.classList.add(textClass);
+      });
+      
+      // 应用到页面标题
+      pageTitle.forEach(element => {
+        element.classList.remove('text-gray-300', 'text-gray-800', 'text-gray-100');
+        element.classList.add(textClass);
+      });
+    }
+    
+    // 调整卡片透明度
+    function adjustCardOpacity(isLightBackground) {
+      // 根据背景亮度设置基础透明度
+      const baseOpacity = isLightBackground ? 0.25 : 0.15;
+      
+      // 获取所有卡片元素
+      const cards = document.querySelectorAll('.glass-effect');
+      
+      // 为每个卡片设置不同的透明度
+      cards.forEach(card => {
+        // 随机微调每个卡片的透明度
+        const randomVariation = (Math.random() - 0.5) * 0.05;
+        const opacity = baseOpacity + randomVariation;
+        
+        // 更新卡片样式
+        card.style.backgroundColor = `rgba(255, 255, 255, ${opacity})`;
+        
+        // 如果是深色背景，调整边框颜色
+        if (!isLightBackground) {
+          card.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+        } else {
+          card.style.borderColor = 'rgba(0, 0, 0, 0.1)';
+        }
+      });
+    }
+    
+    // 窗口大小变化时重新调整
+    window.addEventListener('resize', function() {
+      // 重新应用文本颜色和卡片透明度
+      const isLightBackground = document.body.classList.contains('light-background');
+      applyTextColor(isLightBackground);
+      adjustCardOpacity(isLightBackground);
+    });
+  </script>
+</body>
+</html>
