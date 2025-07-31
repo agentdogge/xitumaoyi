@@ -3,24 +3,57 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Global Social Platforms</title>
+  <title>After-sales service card</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/qrcode.js@1.0.0/qrcode.min.js"></script>
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
+            primary: '#165DFF',
+            secondary: '#4080FF',
+            success: '#00B42A',
+            warning: '#FF7D00',
+            danger: '#F53F3F',
+            info: '#86909C',
+            light: '#F2F3F5',
+            dark: '#1a1a2e',
+            // Platform colors
             facebook: '#1877F2',
             instagram: '#C13584',
             youtube: '#FF0000',
             tiktok: '#000000',
             whatsapp: '#25D366',
-            website: '#165DFF',
+            twitter: '#1DA1F2',
+            linkedin: '#0077B5',
+            pinterest: '#E60023',
+            snapchat: '#FFFC00',
+            website: '#165DFF', // Independent site color
           },
           fontFamily: {
-            inter: ['Inter', 'sans-serif'],
+            inter: ['Inter', 'system-ui', 'sans-serif'],
           },
+          boxShadow: {
+            'card': '0 10px 30px -5px rgba(0, 0, 0, 0.1)',
+            'glass': '0 8px 32px rgba(0, 0, 0, 0.1)',
+          },
+          animation: {
+            'fade-in': 'fadeIn 0.5s ease-in-out',
+            'slide-up': 'slideUp 0.4s ease-out',
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+          },
+          keyframes: {
+            fadeIn: {
+              '0%': { opacity: '0' },
+              '100%': { opacity: '1' },
+            },
+            slideUp: {
+              '0%': { transform: 'translateY(20px)', opacity: '0' },
+              '100%': { transform: 'translateY(0)', opacity: '1' },
+            }
+          }
         },
       }
     }
@@ -30,288 +63,905 @@
       .content-auto {
         content-visibility: auto;
       }
-      .card-hover {
-        @apply transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
-      }
-      .btn-facebook {
-        @apply bg-facebook text-white px-4 py-2 rounded-lg transition-all hover:bg-facebook/90 active:scale-95;
-      }
-      .btn-instagram {
-        @apply bg-instagram text-white px-4 py-2 rounded-lg transition-all hover:bg-instagram/90 active:scale-95;
-      }
-      .btn-youtube {
-        @apply bg-youtube text-white px-4 py-2 rounded-lg transition-all hover:bg-youtube/90 active:scale-95;
-      }
-      .btn-tiktok {
-        @apply bg-tiktok text-white px-4 py-2 rounded-lg transition-all hover:bg-tiktok/90 active:scale-95;
-      }
-      .btn-whatsapp {
-        @apply bg-whatsapp text-white px-4 py-2 rounded-lg transition-all hover:bg-whatsapp/90 active:scale-95;
-      }
-      .btn-website {
-        @apply bg-website text-white px-4 py-2 rounded-lg transition-all hover:bg-website/90 active:scale-95;
-      }
       .glass-effect {
         @apply backdrop-blur-xl bg-white/10 border border-white/10 hover:bg-white/20 transition-all duration-300;
       }
-      .text-light {
-        @apply text-gray-100;
+      .card-hover {
+        @apply transition-all duration-300 hover:shadow-card hover:-translate-y-1;
       }
-      .text-dark {
-        @apply text-gray-800;
+      .btn-platform {
+        @apply text-white px-4 py-2 rounded-lg transition-all hover:opacity-90 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2;
+      }
+      .input-field {
+        @apply w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-primary focus:border-primary transition-all duration-200;
+      }
+      .input-error {
+        @apply border-danger focus:ring-danger;
+      }
+      .error-shake {
+        animation: shake 0.5s;
+      }
+      @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+        20%, 40%, 60%, 80% { transform: translateX(5px); }
+      }
+      .gradient-text {
+        @apply bg-clip-text text-transparent bg-gradient-to-r;
+      }
+      .text-balance {
+        text-wrap: balance;
       }
     }
   </style>
 </head>
-<body class="font-inter min-h-screen" id="bodyElement">
-  <main class="container mx-auto px-4 py-8">
-    <!-- 页面标题 -->
-    <section class="text-center mb-12" id="pageTitle">
-      <h2 class="text-[clamp(1.8rem,4vw,3rem)] font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-website to-blue-400">
-        After-sales Service Card
+<body class="font-inter min-h-screen bg-gradient-to-br from-dark to-gray-900 text-light">
+  <!-- Network status indicator -->
+  <div id="networkStatus" class="fixed top-4 right-4 z-50 px-4 py-2 rounded-lg text-white transition-all duration-300 opacity-0 pointer-events-none flex items-center">
+    <i class="fa fa-wifi mr-2" id="networkIcon"></i>
+    <span id="networkText">Online</span>
+  </div>
+
+  <!-- Loading indicator -->
+  <div id="loadingIndicator" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm hidden">
+    <div class="flex flex-col items-center">
+      <div class="w-16 h-16 border-4 border-primary/30 border-t-primary rounded-full animate-spin mb-4"></div>
+      <p class="text-light text-lg">Processing...</p>
+    </div>
+  </div>
+
+  <!-- Authorization modal -->
+  <div id="authorizationModal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+    <div class="relative bg-white/10 rounded-xl p-6 max-w-md w-full glass-effect animate-fade-in">
+      <div class="flex justify-end">
+        <button id="closeAuthModal" class="text-gray-400 hover:text-white transition-colors">
+          <i class="fa fa-times text-xl"></i>
+        </button>
+      </div>
+      <div class="text-center mb-6">
+        <div class="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="fa fa-user-circle text-primary text-2xl"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-2">Is authorization granted to collect personal social media profile information?</h3>
+        <p class="text-gray-300 text-sm">We will collect your social media account information and generate a share link, which other users can use to view your account information.</p>
+      </div>
+      <div class="space-y-3">
+        <button id="authorizeYes" class="btn-platform bg-primary focus:ring-primary">
+          <i class="fa fa-check mr-2"></i> Agree
+        </button>
+        <button id="authorizeNo" class="btn-platform bg-gray-600 focus:ring-gray-500">
+          <i class="fa fa-times mr-2"></i> Refuse
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Social media account form -->
+  <div id="socialMediaForm" class="fixed inset-0 z-50 flex items-center justify-center hidden">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+    <div class="relative bg-white/10 rounded-xl p-6 max-w-md w-full glass-effect animate-fade-in">
+      <div class="flex justify-between items-center mb-6">
+        <h3 class="text-xl font-bold">Enter your social media account</h3>
+        <button id="closeSocialMediaForm" class="text-gray-400 hover:text-white transition-colors">
+          <i class="fa fa-times text-xl"></i>
+        </button>
+      </div>
+      
+      <div id="socialPlatformsList" class="space-y-4 mb-6">
+        <!-- Platform forms will be dynamically generated -->
+      </div>
+      
+      <div class="flex space-x-3">
+        <button id="addPlatformBtn" class="btn-platform bg-gray-600 flex-1 focus:ring-gray-500">
+          <i class="fa fa-plus mr-1"></i> Add platform
+        </button>
+        <button id="generateLink" class="btn-platform bg-primary flex-2 focus:ring-primary">
+          <i class="fa fa-link mr-2"></i> Generate share link
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Platform selector modal -->
+  <div id="platformSelectorModal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+    <div class="relative bg-white/10 rounded-xl p-6 max-w-md w-full glass-effect animate-fade-in">
+      <div class="flex justify-between items-center mb-6">
+        <h3 class="text-xl font-bold">Choose platform</h3>
+        <button id="closePlatformSelector" class="text-gray-400 hover:text-white transition-colors">
+          <i class="fa fa-times text-xl"></i>
+        </button>
+      </div>
+      
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
+        <button class="platform-btn" data-platform="facebook">
+          <div class="w-full p-3 bg-facebook/10 rounded-lg text-center">
+            <i class="fa fa-facebook text-facebook text-xl mb-1"></i>
+            <p class="text-xs">Facebook</p>
+          </div>
+        </button>
+        <button class="platform-btn" data-platform="instagram">
+          <div class="w-full p-3 bg-instagram/10 rounded-lg text-center">
+            <i class="fa fa-instagram text-instagram text-xl mb-1"></i>
+            <p class="text-xs">Instagram</p>
+          </div>
+        </button>
+        <button class="platform-btn" data-platform="youtube">
+          <div class="w-full p-3 bg-youtube/10 rounded-lg text-center">
+            <i class="fa fa-youtube-play text-youtube text-xl mb-1"></i>
+            <p class="text-xs">YouTube</p>
+          </div>
+        </button>
+        <button class="platform-btn" data-platform="whatsapp">
+          <div class="w-full p-3 bg-whatsapp/10 rounded-lg text-center">
+            <i class="fa fa-whatsapp text-whatsapp text-xl mb-1"></i>
+            <p class="text-xs">WhatsApp</p>
+          </div>
+        </button>
+        <button class="platform-btn" data-platform="twitter">
+          <div class="w-full p-3 bg-twitter/10 rounded-lg text-center">
+            <i class="fa fa-twitter text-twitter text-xl mb-1"></i>
+            <p class="text-xs">Twitter</p>
+          </div>
+        </button>
+        <button class="platform-btn" data-platform="linkedin">
+          <div class="w-full p-3 bg-linkedin/10 rounded-lg text-center">
+            <i class="fa fa-linkedin text-linkedin text-xl mb-1"></i>
+            <p class="text-xs">LinkedIn</p>
+          </div>
+        </button>
+        <button class="platform-btn" data-platform="website">
+          <div class="w-full p-3 bg-website/10 rounded-lg text-center">
+            <i class="fa fa-globe text-website text-xl mb-1"></i>
+            <p class="text-xs">Independent site</p>
+          </div>
+        </button>
+      </div>
+      
+      <button id="cancelPlatformSelector" class="btn-platform bg-gray-600 w-full focus:ring-gray-500">
+        Cancel
+      </button>
+    </div>
+  </div>
+
+  <!-- Share link modal -->
+  <div id="shareLinkModal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+    <div class="relative bg-white/10 rounded-xl p-6 max-w-md w-full glass-effect animate-fade-in">
+      <div class="flex justify-between items-center mb-6">
+        <h3 class="text-xl font-bold">Share your contact information</h3>
+        <button id="closeShareLinkModal" class="text-gray-400 hover:text-white transition-colors">
+          <i class="fa fa-times text-xl"></i>
+        </button>
+      </div>
+      
+      <div class="mb-6 text-center">
+        <div id="qrcodeContainer" class="w-48 h-48 mx-auto mb-4 bg-white p-2 rounded-lg">
+          <div id="qrcode" class="w-full h-full"></div>
+        </div>
+        <p class="text-gray-300 text-sm mb-4">Scan the QR code or copy the link to share.</p>
+        
+        <div class="relative">
+          <input type="text" id="shareLink" readonly class="input-field pr-12 bg-white/5 text-white" placeholder="The generated link will be displayed here.">
+          <button id="copyLink" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-primary hover:text-primary/80 transition-colors">
+            <i class="fa fa-copy text-lg"></i>
+          </button>
+        </div>
+      </div>
+      
+      <div class="grid grid-cols-3 gap-3 mb-6">
+        <button class="btn-platform bg-facebook" id="shareFacebook">
+          <i class="fa fa-facebook"></i>
+        </button>
+        <button class="btn-platform bg-twitter" id="shareTwitter">
+          <i class="fa fa-twitter"></i>
+        </button>
+        <button class="btn-platform bg-whatsapp" id="shareWhatsapp">
+          <i class="fa fa-whatsapp"></i>
+        </button>
+      </div>
+      
+      <button id="closeShareModal" class="btn-platform bg-gray-600 w-full focus:ring-gray-500">
+        Close
+      </button>
+    </div>
+  </div>
+
+  <!-- View social media accounts modal -->
+  <div id="viewSocialMediaModal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+    <div class="relative bg-white/10 rounded-xl p-6 max-w-md w-full glass-effect animate-fade-in">
+      <div class="flex justify-between items-center mb-6">
+        <h3 class="text-xl font-bold">Check social media accounts</h3>
+        <button id="closeSocialMediaModal" class="text-gray-400 hover:text-white transition-colors">
+          <i class="fa fa-times text-xl"></i>
+        </button>
+      </div>
+      
+      <div id="socialMediaLinks" class="space-y-4 mb-6">
+        <!-- Social media links will be dynamically generated here -->
+      </div>
+      
+      <div class="text-center">
+        <button id="closeSocialMediaModalBtn" class="btn-platform bg-gray-600 w-full focus:ring-gray-500">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <main class="container mx-auto px-4 py-8 max-w-6xl">
+    <!-- Page title -->
+    <section class="text-center mb-12 animate-fade-in">
+      <h2 class="text-[clamp(1.8rem,4vw,3rem)] font-bold mb-4 gradient-text from-primary to-secondary">
+        After-sales service card
       </h2>
-      <p class="text-gray-300 max-w-2xl mx-auto text-lg">
-        You can use this card to quickly find all of our social media accounts
+      <p class="text-gray-300 max-w-2xl mx-auto text-balance">
+        You can quickly contact us through the link below.
       </p>
+     
     </section>
     
-    <!-- 平台网格 -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="socialPlatforms">
-      <!-- Facebook -->
-      <div class="social-card glass-effect rounded-xl shadow-lg overflow-hidden card-hover" data-category="Social Networks">
-        <div class="h-3 bg-facebook"></div>
-        <div class="p-6">
-          <div class="flex justify-between items-start mb-4">
-            <div class="w-12 h-12 rounded-lg bg-facebook/20 flex items-center justify-center">
-              <i class="fa fa-facebook text-facebook text-2xl"></i>
-            </div>
-            <span class="bg-facebook/20 text-facebook text-xs px-2 py-1 rounded-full">Social Network</span>
-          </div>
-          <h3 class="text-xl font-bold mb-2 text-content">Facebook</h3>
-          <p class="text-gray-300 text-sm h-12 mb-4 overflow-hidden text-content">The world's largest social network with over 2.8 billion monthly active users.</p>
-          <a href="https://www.facebook.com/xitumaoyiebike/" target="_blank" class="block w-full text-center btn-facebook">
-            Find us
-          </a>
-        </div>
-      </div>
-      
-      <!-- Instagram -->
-      <div class="social-card glass-effect rounded-xl shadow-lg overflow-hidden card-hover" data-category="Media Sharing">
-        <div class="h-3 bg-instagram"></div>
-        <div class="p-6">
-          <div class="flex justify-between items-start mb-4">
-            <div class="w-12 h-12 rounded-lg bg-instagram/20 flex items-center justify-center">
-              <i class="fa fa-instagram text-instagram text-2xl"></i>
-            </div>
-            <span class="bg-instagram/20 text-instagram text-xs px-2 py-1 rounded-full">Media Sharing</span>
-          </div>
-          <h3 class="text-xl font-bold mb-2 text-content">Instagram</h3>
-          <p class="text-gray-300 text-sm h-12 mb-4 overflow-hidden text-content">A photo and video sharing platform popular among younger audiences.</p>
-          <a href="https://www.instagram.com/xitumaoyiebike/" target="_blank" class="block w-full text-center btn-instagram">
-            Find us
-          </a>
-        </div>
-      </div>
-      
-      <!-- YouTube -->
-      <div class="social-card glass-effect rounded-xl shadow-lg overflow-hidden card-hover" data-category="Media Sharing">
-        <div class="h-3 bg-youtube"></div>
-        <div class="p-6">
-          <div class="flex justify-between items-start mb-4">
-            <div class="w-12 h-12 rounded-lg bg-youtube/20 flex items-center justify-center">
-              <i class="fa fa-youtube-play text-youtube text-2xl"></i>
-            </div>
-            <span class="bg-youtube/20 text-youtube text-xs px-2 py-1 rounded-full">Media Sharing</span>
-          </div>
-          <h3 class="text-xl font-bold mb-2 text-content">YouTube</h3>
-          <p class="text-gray-300 text-sm h-12 mb-4 overflow-hidden text-content">The world's largest video-sharing platform with billions of users.</p>
-          <a href="https://www.youtube.com/@Xitumaoyiebike" target="_blank" class="block w-full text-center btn-youtube">
-            Find us
-          </a>
-        </div>
-      </div>
+    <!-- Platform grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5" id="socialPlatforms">
+      <!-- Platform cards will be dynamically generated via JavaScript -->
+    </div>
 
-      <!-- TikTok -->
-      <div class="social-card glass-effect rounded-xl shadow-lg overflow-hidden card-hover" data-category="Social Networks">
-        <div class="h-3 bg-tiktok"></div>
-        <div class="p-6">
-          <div class="flex justify-between items-start mb-4">
-            <div class="w-12 h-12 rounded-lg bg-gray-700 flex items-center justify-center">
-              <i class="fa fa-music text-white text-2xl"></i>
+    <!-- Recommended content -->
+    <div class="mt-12">
+      <h3 class="text-xl font-bold mb-6">Recommended content</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="glass-effect rounded-xl overflow-hidden card-hover">
+          <div class="h-48 bg-gray-700 relative">
+            <img src="https://picsum.photos/id/1018/800/600" alt="Social media tips" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+            <div class="absolute bottom-4 left-4">
+              <span class="bg-primary/90 text-white text-xs px-2 py-1 rounded-full">Tips</span>
             </div>
-            <span class="bg-gray-700 text-white text-xs px-2 py-1 rounded-full">Social Network</span>
           </div>
-          <h3 class="text-xl font-bold mb-2 text-content">TikTok</h3>
-          <p class="text-gray-300 text-sm h-12 mb-4 overflow-hidden text-content">A short - form video sharing social networking service.</p>
-          <a href="https://www.tiktok.com/@xitumaoyiebike" target="_blank" class="block w-full text-center bg-gray-700 text-white px-4 py-2 rounded-lg transition-all hover:bg-gray-600 active:scale-95">
-            Find us
-          </a>
+          <div class="p-5">
+            <h4 class="text-lg font-bold mb-2">Social Media Growth Strategy</h4>
+            <p class="text-gray-300 text-sm mb-4">Learn how to quickly grow your followers and influence through effective social media strategies.</p>
+            <a href="https://www.youtube.com/shorts/M3U3l3fl07M" class="text-primary hover:text-primary/80 text-sm font-medium flex items-center">
+              Read more <i class="fa fa-arrow-right ml-1"></i>
+            </a>
+          </div>
         </div>
-      </div>
-
-      <!-- WhatsApp -->
-      <div class="social-card glass-effect rounded-xl shadow-lg overflow-hidden card-hover" data-category="Social Networks">
-        <div class="h-3 bg-whatsapp"></div>
-        <div class="p-6">
-          <div class="flex justify-between items-start mb-4">
-            <div class="w-12 h-12 rounded-lg bg-whatsapp/20 flex items-center justify-center">
-              <i class="fa fa-whatsapp text-whatsapp text-2xl"></i>
+        
+        <div class="glass-effect rounded-xl overflow-hidden card-hover">
+          <div class="h-48 bg-gray-700 relative">
+            <img src="https://picsum.photos/id/1015/800/600" alt="Content creation" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+            <div class="absolute bottom-4 left-4">
+              <span class="bg-secondary/90 text-white text-xs px-2 py-1 rounded-full">Content</span>
             </div>
-            <span class="bg-whatsapp/20 text-whatsapp text-xs px-2 py-1 rounded-full">Social Network</span>
           </div>
-          <h3 class="text-xl font-bold mb-2 text-content">WhatsApp</h3>
-          <p class="text-gray-300 text-sm h-12 mb-4 overflow-hidden text-content">Our Phone Number +1（806）5598952.</p>
-          <a href="https://wa.me/your-phone-number" target="_blank" class="block w-full text-center btn-whatsapp">
-            Find us
-          </a>
-        </div>
-      </div>
-
-      <!-- 独立站 -->
-      <div class="social-card glass-effect rounded-xl shadow-lg overflow-hidden card-hover" data-category="Independent Website">
-        <div class="h-3 bg-website"></div>
-        <div class="p-6">
-          <div class="flex justify-between items-start mb-4">
-            <div class="w-12 h-12 rounded-lg bg-website/20 flex items-center justify-center">
-              <i class="fa fa-globe text-website text-2xl"></i>
-            </div>
-            <span class="bg-website/20 text-website text-xs px-2 py-1 rounded-full">Independent Website</span>
+          <div class="p-5">
+            <h4 class="text-lg font-bold mb-2">Guide to High-Quality Content Creation</h4>
+            <p class="text-gray-300 text-sm mb-4">Learn how to create engaging content to improve engagement and conversion rates.</p>
+            <a href="https://www.youtube.com/watch?v=gEQ0BLyVJhY" class="text-primary hover:text-primary/80 text-sm font-medium flex items-center">
+              Read more <i class="fa fa-arrow-right ml-1"></i>
+            </a>
           </div>
-          <h3 class="text-xl font-bold mb-2 text-content">Independent Website</h3>
-          <p class="text-gray-300 text-sm h-12 mb-4 overflow-hidden text-content">https://www.xitumaoyiebike.com.</p>
-          <a href="https://www.xitumaoyiebike.com" target="_blank" class="block w-full text-center btn-website">
-            Find us
-          </a>
         </div>
       </div>
     </div>
   </main>
+
+  <!-- Share button -->
+  <button id="shareContactBtn" class="fixed bottom-6 right-6 bg-primary hover:bg-primary/90 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110">
+    <i class="fa fa-share-alt text-xl"></i>
+  </button>
+
   <script>
-    // 定义图片数组，使用示例图片URL
-    const backgroundImages = [
-      'https://picsum.photos/id/1018/1920/1080', // 明亮风景
-      'https://picsum.photos/id/1015/1920/1080', // 黑暗风景
-      'https://picsum.photos/id/1019/1920/1080', // 明亮建筑
-      'https://picsum.photos/id/1039/1920/1080', // 黑暗自然
-      'https://picsum.photos/id/1040/1920/1080', // 明亮自然
-      'https://picsum.photos/id/1059/1920/1080', // 黑暗城市
-      'https://picsum.photos/id/1076/1920/1080', // 明亮城市
-      'https://picsum.photos/id/1074/1920/1080', // 黑暗山脉
+    // Social media platform data
+    const socialPlatforms = [
+      {
+        name: 'Facebook',
+        icon: 'facebook',
+        color: 'facebook',
+        category: 'Social Networks',
+        description: 'Connect with our global community',
+        url: 'https://www.facebook.com/groups/1065939408589858/',
+        placeholder: 'https://facebook.com/yourname'
+      },
+      {
+        name: 'Instagram',
+        icon: 'instagram',
+        color: 'instagram',
+        category: 'Media Sharing',
+        description: 'Visual updates and behind the scenes',
+        url: 'https://www.instagram.com/xitumaoyiebike/',
+        placeholder: 'https://www.instagram.com/yourname/'
+      },
+      {
+        name: 'YouTube',
+        icon: 'youtube',
+        color: 'youtube',
+        category: 'Media Sharing',
+        description: 'Tutorials and product demonstrations',
+        url: 'https://www.youtube.com/@Xitumaoyiebike',
+        placeholder: 'https://www.youtube.com/channel/UCyourchannelid'
+      },
+      {
+        name: 'TikTok',
+        icon: 'music',
+        color: 'tiktok',
+        category: 'Social Networks',
+        description: 'Short videos and quick updates',
+        url: 'https://www.tiktok.com/@xitumaoyiebike',
+        placeholder: 'https://www.tiktok.com/@yourname'
+      },
+      {
+        name: 'WhatsApp',
+        icon: 'whatsapp',
+        color: 'whatsapp',
+        category: 'Customer Support',
+        description: 'Direct message support',
+        url: 'https://wa.me/18065598952',
+        placeholder: 'https://wa.me/1234567890'
+      },
+      {
+        name: 'Independent site',
+        icon: 'globe',
+        color: 'website',
+        category: 'E-commerce',
+        description: 'Visit our official website',
+        url: 'https://www.xitumaoyiebike.com',
+        placeholder: 'https://www.yourwebsite.com'
+      }
     ];
 
-    // 随机选择一张图片
-    const randomIndex = Math.floor(Math.random() * backgroundImages.length);
-    const randomImage = backgroundImages[randomIndex];
+    // Default selected platforms
+    let selectedPlatforms = ['facebook', 'instagram', 'youtube', 'whatsapp', 'website'];
 
-    // 设置背景图
-    const bodyElement = document.getElementById('bodyElement');
-    bodyElement.style.backgroundImage = `url('${randomImage}')`;
-    bodyElement.style.backgroundSize = 'cover';
-    bodyElement.style.backgroundPosition = 'center';
-    bodyElement.style.backgroundAttachment = 'fixed'; // 固定背景图，使滚动时效果更好
+    // Network status management
+    let isOnline = navigator.onLine;
     
-    // 创建一个临时图像元素来分析亮度
-    const img = new Image();
-    img.src = randomImage;
+    // Display network status
+    const networkStatus = document.getElementById('networkStatus');
+    const networkIcon = document.getElementById('networkIcon');
+    const networkText = document.getElementById('networkText');
     
-    // 图像加载完成后分析亮度
-    img.onload = function() {
-      // 创建一个画布来分析图像
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      
-      // 设置画布大小为图像的一小部分，以提高性能
-      const sampleSize = 100;
-      canvas.width = sampleSize;
-      canvas.height = sampleSize;
-      
-      // 绘制图像到画布
-      ctx.drawImage(img, 0, 0, sampleSize, sampleSize);
-      
-      // 获取图像数据
-      const imageData = ctx.getImageData(0, 0, sampleSize, sampleSize);
-      const data = imageData.data;
-      
-      // 计算平均亮度
-      let totalBrightness = 0;
-      const pixelCount = sampleSize * sampleSize;
-      
-      for (let i = 0; i < data.length; i += 4) {
-        // 使用感知亮度公式计算每个像素的亮度
-        const r = data[i];
-        const g = data[i + 1];
-        const b = data[i + 2];
-        const brightness = 0.299 * r + 0.587 * g + 0.114 * b;
-        totalBrightness += brightness;
+    function updateNetworkStatus() {
+      if (isOnline) {
+        networkStatus.className = 'fixed top-4 right-4 z-50 px-4 py-2 rounded-lg text-white transition-all duration-300 bg-success/90 flex items-center';
+        networkIcon.className = 'fa fa-wifi mr-2';
+        networkText.textContent = 'Online';
+      } else {
+        networkStatus.className = 'fixed top-4 right-4 z-50 px-4 py-2 rounded-lg text-white transition-all duration-300 bg-danger/90 flex items-center';
+        networkIcon.className = 'fa fa-wifi fa-ban mr-2';
+        networkText.textContent = 'Offline';
       }
       
-      // 计算平均亮度值 (0-255)
-      const averageBrightness = totalBrightness / pixelCount;
-      
-      // 根据平均亮度决定文本颜色
-      const isLightBackground = averageBrightness > 128;
-      
-      // 应用文本颜色
-      applyTextColor(isLightBackground);
-      
-      // 调整卡片透明度
-      adjustCardOpacity(isLightBackground);
-    };
-    
-    // 应用文本颜色
-    function applyTextColor(isLightBackground) {
-      const textElements = document.querySelectorAll('.text-content');
-      const pageTitle = document.getElementById('pageTitle').querySelectorAll('p');
-      
-      // 根据背景亮度设置文本颜色
-      const textClass = isLightBackground ? 'text-dark' : 'text-light';
-      
-      // 应用到卡片文本
-      textElements.forEach(element => {
-        element.classList.remove('text-gray-300', 'text-gray-800', 'text-gray-100');
-        element.classList.add(textClass);
-      });
-      
-      // 应用到页面标题
-      pageTitle.forEach(element => {
-        element.classList.remove('text-gray-300', 'text-gray-800', 'text-gray-100');
-        element.classList.add(textClass);
-      });
+      // Hide after 3 seconds
+      networkStatus.classList.remove('opacity-0');
+      setTimeout(() => {
+        networkStatus.classList.add('opacity-0');
+      }, 3000);
     }
     
-    // 调整卡片透明度
-    function adjustCardOpacity(isLightBackground) {
-      // 根据背景亮度设置基础透明度
-      const baseOpacity = isLightBackground ? 0.25 : 0.15;
+    // Listen for network changes
+    window.addEventListener('online', () => {
+      isOnline = true;
+      updateNetworkStatus();
+    });
+    
+    window.addEventListener('offline', () => {
+      isOnline = false;
+      updateNetworkStatus();
+    });
+
+    async function preloadCriticalResources() {
+      if (!isOnline) {
+        updateNetworkStatus();
+        return;
+      }
       
-      // 获取所有卡片元素
-      const cards = document.querySelectorAll('.glass-effect');
-      
-      // 为每个卡片设置不同的透明度
-      cards.forEach(card => {
-        // 随机微调每个卡片的透明度
-        const randomVariation = (Math.random() - 0.5) * 0.05;
-        const opacity = baseOpacity + randomVariation;
-        
-        // 更新卡片样式
-        card.style.backgroundColor = `rgba(255, 255, 255, ${opacity})`;
-        
-        // 如果是深色背景，调整边框颜色
-        if (!isLightBackground) {
-          card.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+      // Select appropriate background image based on device width
+      const getBackgroundImage = () => {
+        const width = window.innerWidth;
+        if (width < 640) {
+          // Mobile: Use portrait ratio image to avoid horizontal cropping
+          return 'images/fixebike1-mobile.jpg'; // Recommended ratio 9:16 or 3:4
+        } else if (width < 1024) {
+          // Tablet: Use medium ratio image
+          return 'images/fixebike1-tablet.jpg'; // Recommended ratio 4:3 or 16:10
         } else {
-          card.style.borderColor = 'rgba(0, 0, 0, 0.1)';
+          // PC: Use wide-screen image
+          return 'images/fixebike1-desktop.jpg'; // Recommended ratio 16:9 or 21:9
+        }
+      };
+      
+      // Load adaptive background image
+      const img = new Image();
+      img.src = 'images/fixebike1.jpg';
+      
+      return new Promise((resolve, reject) => {
+        img.onload = () => {
+          document.body.style.backgroundImage = `url('${img.src}')`;
+          document.body.style.backgroundSize = 'cover'; // Cover the entire background area
+          document.body.style.backgroundPosition = 'center'; // Center the image
+          document.body.style.backgroundAttachment = 'fixed'; // Fix the background, do not move with scrolling
+          document.body.style.backgroundRepeat = 'no-repeat';
+          
+          // Add responsive listener, update background image when window size changes
+          window.addEventListener('resize', () => {
+            const newImage = getBackgroundImage();
+            if (newImage !== img.src) {
+              img.src = newImage;
+              img.onload = () => {
+                document.body.style.backgroundImage = `url('${img.src}')`;
+              };
+            }
+          });
+          
+          resolve();
+        };
+        
+        img.onerror = (error) => {
+          console.error('Background image load error:', error);
+          // Use backup background
+          document.body.style.backgroundColor = '#1a1a2e';
+          resolve(); 
+        };
+      });
+    }
+
+    // Initialize platform cards
+    function initPlatformCards() {
+      const container = document.getElementById('socialPlatforms');
+      container.innerHTML = '';
+      
+      socialPlatforms.forEach(platform => {
+        const card = document.createElement('div');
+        // Modify to fixed height
+        card.className = 'social-card glass-effect rounded-xl shadow-lg overflow-hidden card-hover animate-fade-in h-64 flex flex-col'; 
+        
+        card.innerHTML = `
+          <div class="p-5 flex-grow">
+            <div class="w-12 h-12 rounded-lg bg-${platform.color}/20 flex items-center justify-center mb-4">
+              <i class="fa fa-${platform.icon} text-${platform.color} text-xl"></i>
+            </div>
+            <h3 class="font-bold text-lg mb-1">${platform.name}</h3>
+            <p class="text-gray-400 text-sm mb-4">${platform.description}</p>
+          </div>
+          <div class="p-5 border-t border-white/10">
+            <a href="${platform.url}" target="_blank" class="btn-platform bg-${platform.color} text-sm">
+              Connect <i class="fa fa-arrow-right ml-1"></i>
+            </a>
+          </div>
+        `;
+        
+        container.appendChild(card);
+      });
+      
+      // Rebind events
+      setupCardEventListeners();
+    }
+
+    // Set up card event listeners
+    function setupCardEventListeners() {
+      const socialMediaLinks = document.querySelectorAll('.social-card a');
+      socialMediaLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          
+          const platformName = this.closest('.social-card').querySelector('h3').textContent;
+          const platformUrl = this.href;
+          
+          // Show modal
+          document.getElementById('viewSocialMediaModal').classList.remove('hidden');
+          
+          // Clear and add currently clicked link
+          const linksContainer = document.getElementById('socialMediaLinks');
+          linksContainer.innerHTML = '';
+          
+          const platformCard = document.createElement('div');
+          platformCard.className = 'glass-effect rounded-lg p-4';
+          
+          // Find platform color
+          const platform = socialPlatforms.find(p => p.name === platformName);
+          const color = platform ? platform.color : 'primary';
+          
+          platformCard.innerHTML = `
+            <div class="flex items-center">
+              <div class="w-10 h-10 rounded-lg bg-${color}/20 flex items-center justify-center mr-3">
+                <i class="fa fa-${platform ? platform.icon : 'link'} text-${color} text-xl"></i>
+              </div>
+              <div class="flex-1">
+                <h4 class="font-bold">${platformName}</h4>
+                <p class="text-gray-400 text-sm truncate">${platformUrl}</p>
+              </div>
+              <a href="${platformUrl}" target="_blank" class="btn-platform bg-${color} text-xs px-3 py-1">
+                Visit
+              </a>
+            </div>
+          `;
+          
+          linksContainer.appendChild(platformCard);
+        });
+      });
+    }
+
+    // Set up event listeners
+    function setupEventListeners() {
+      // Share button
+      const shareContactBtn = document.getElementById('shareContactBtn');
+      if (!shareContactBtn) {
+        console.error('Share contact button not found!');
+        return;
+      }
+      shareContactBtn.addEventListener('click', function() {
+        document.getElementById('authorizationModal').classList.remove('hidden');
+      });
+      
+      // Authorization modal
+      const authorizeYes = document.getElementById('authorizeYes');
+      const authorizeNo = document.getElementById('authorizeNo');
+      const closeAuthModal = document.getElementById('closeAuthModal');
+      
+      if (!authorizeYes || !authorizeNo || !closeAuthModal) {
+        console.error('Authorization modal elements not found!');
+        return;
+      }
+      
+      authorizeYes.addEventListener('click', function() {
+        document.getElementById('authorizationModal').classList.add('hidden');
+        document.getElementById('socialMediaForm').classList.remove('hidden');
+        
+        // Initialize form
+        initPlatformInputs();
+        
+        // Auto-focus on the first input field
+        const firstInput = document.querySelector('#socialMediaForm input');
+        if (firstInput) firstInput.focus();
+      });
+      
+      authorizeNo.addEventListener('click', function() {
+        document.getElementById('authorizationModal').classList.add('hidden');
+      });
+      
+      closeAuthModal.addEventListener('click', function() {
+        document.getElementById('authorizationModal').classList.add('hidden');
+      });
+      
+      // Social media form
+      const closeSocialMediaForm = document.getElementById('closeSocialMediaForm');
+      const generateLinkBtn = document.getElementById('generateLink');
+      
+      if (!closeSocialMediaForm || !generateLinkBtn) {
+        console.error('Social media form elements not found!');
+        return;
+      }
+      
+      closeSocialMediaForm.addEventListener('click', function() {
+        document.getElementById('socialMediaForm').classList.add('hidden');
+      });
+      
+      generateLinkBtn.addEventListener('click', function() {
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        loadingIndicator.classList.remove('hidden');
+        
+        setTimeout(() => {
+          const link = createShareLink();
+          loadingIndicator.classList.add('hidden');
+          
+          if (link) {
+            document.getElementById('shareLink').value = link;
+            document.getElementById('socialMediaForm').classList.add('hidden');
+            document.getElementById('shareLinkModal').classList.remove('hidden');
+            
+            // Generate QR code
+            generateQRCode(link);
+            
+            // Success prompt
+            showToast('The sharing link has been generated!', 'success');
+          }
+        }, 800);
+      });
+      
+      // Add platform button
+      const addPlatformBtn = document.getElementById('addPlatformBtn');
+      if (!addPlatformBtn) {
+        console.error('Add platform button not found!');
+        return;
+      }
+      addPlatformBtn.addEventListener('click', function() {
+        document.getElementById('platformSelectorModal').classList.remove('hidden');
+      });
+      
+      // Platform selector
+      const platformButtons = document.querySelectorAll('.platform-btn');
+      platformButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const platformKey = this.getAttribute('data-platform');
+          
+          // Check if already added
+          if (!selectedPlatforms.includes(platformKey)) {
+            selectedPlatforms.push(platformKey);
+            
+            // Update form
+            initPlatformInputs();
+            
+            // Close selector
+            document.getElementById('platformSelectorModal').classList.add('hidden');
+            
+            // Show success prompt
+            showToast(`${this.textContent.trim()} platform has been added.`, 'success');
+          } else {
+            showToast(`${this.textContent.trim()} platform already exists.`, 'info');
+          }
+        });
+      });
+      
+      const closePlatformSelector = document.getElementById('closePlatformSelector');
+      const cancelPlatformSelector = document.getElementById('cancelPlatformSelector');
+      
+      if (!closePlatformSelector || !cancelPlatformSelector) {
+        console.error('Platform selector elements not found!');
+        return;
+      }
+      
+      closePlatformSelector.addEventListener('click', function() {
+        document.getElementById('platformSelectorModal').classList.add('hidden');
+      });
+      
+      cancelPlatformSelector.addEventListener('click', function() {
+        document.getElementById('platformSelectorModal').classList.add('hidden');
+      });
+      
+      // Share link modal
+      const closeShareLinkModal = document.getElementById('closeShareLinkModal');
+      const closeShareModal = document.getElementById('closeShareModal');
+      const copyLinkBtn = document.getElementById('copyLink');
+      
+      if (!closeShareLinkModal || !closeShareModal || !copyLinkBtn) {
+        console.error('Share link modal elements not found!');
+        return;
+      }
+      
+      closeShareLinkModal.addEventListener('click', function() {
+        document.getElementById('shareLinkModal').classList.add('hidden');
+      });
+      
+      closeShareModal.addEventListener('click', function() {
+        document.getElementById('shareLinkModal').classList.add('hidden');
+      });
+      
+      copyLinkBtn.addEventListener('click', function() {
+        const shareLink = document.getElementById('shareLink');
+        shareLink.select();
+        document.execCommand('copy');
+        
+        // Show copy success prompt
+        const originalText = this.innerHTML;
+        this.innerHTML = '<i class="fa fa-check text-lg"></i>';
+        
+        setTimeout(() => {
+          this.innerHTML = originalText;
+        }, 2000);
+        
+        showToast('The link has been copied to the clipboard!', 'success');
+      });
+      
+      // Social media link share buttons
+      const shareFacebook = document.getElementById('shareFacebook');
+      const shareTwitter = document.getElementById('shareTwitter');
+      const shareWhatsapp = document.getElementById('shareWhatsapp');
+      
+      if (!shareFacebook || !shareTwitter || !shareWhatsapp) {
+        console.error('Social media share buttons not found!');
+        return;
+      }
+      
+      shareFacebook.addEventListener('click', function() {
+        const shareLink = document.getElementById('shareLink').value;
+        if (shareLink) {
+          window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareLink)}`, '_blank');
         }
       });
+      
+      shareTwitter.addEventListener('click', function() {
+        const shareLink = document.getElementById('shareLink').value;
+        if (shareLink) {
+          window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(shareLink)}`, '_blank');
+        }
+      });
+      
+      shareWhatsapp.addEventListener('click', function() {
+        const shareLink = document.getElementById('shareLink').value;
+        if (shareLink) {
+          window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent('Check out my social media profile: ' + shareLink)}`, '_blank');
+        }
+      });
+      
+      // View social media accounts modal
+      const closeSocialMediaModal = document.getElementById('closeSocialMediaModal');
+      const closeSocialMediaModalBtn = document.getElementById('closeSocialMediaModalBtn');
+      
+      if (!closeSocialMediaModal || !closeSocialMediaModalBtn) {
+        console.error('View social media modal elements not found!');
+        return;
+      }
+      
+      closeSocialMediaModal.addEventListener('click', function() {
+        document.getElementById('viewSocialMediaModal').classList.add('hidden');
+      });
+      
+      closeSocialMediaModalBtn.addEventListener('click', function() {
+        document.getElementById('viewSocialMediaModal').classList.add('hidden');
+      });
     }
-    
-    // 窗口大小变化时重新调整
-    window.addEventListener('resize', function() {
-      // 重新应用文本颜色和卡片透明度
-      const isLightBackground = document.body.classList.contains('light-background');
-      applyTextColor(isLightBackground);
-      adjustCardOpacity(isLightBackground);
-    });
+
+    // Initialize platform input forms
+    function initPlatformInputs() {
+      const container = document.getElementById('socialPlatformsList');
+      container.innerHTML = '';
+      
+      selectedPlatforms.forEach(platformKey => {
+        const platform = socialPlatforms.find(p => p.name.toLowerCase() === platformKey) || {
+          name: platformKey.charAt(0).toUpperCase() + platformKey.slice(1),
+          icon: platformKey,
+          color: platformKey,
+          placeholder: `https://${platformKey}.com/yourname`
+        };
+        
+        const formGroup = document.createElement('div');
+        formGroup.className = 'platform-form-group glass-effect rounded-lg p-4 flex items-center';
+        
+        formGroup.innerHTML = `
+          <div class="w-10 h-10 rounded-lg bg-${platform.color}/20 flex items-center justify-center mr-3 flex-shrink-0">
+            <i class="fa fa-${platform.icon} text-${platform.color} text-xl"></i>
+          </div>
+          <div class="flex-1 mr-3">
+            <label class="block text-sm font-medium text-gray-300 mb-1">${platform.name}</label>
+            <div class="relative">
+              <input 
+                type="url" 
+                class="input-field bg-white/5 text-white" 
+                placeholder="${platform.placeholder}" 
+                data-platform="${platformKey}"
+              >
+              <button type="button" class="remove-platform absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-danger">
+                <i class="fa fa-times"></i>
+              </button>
+            </div>
+          </div>
+        `;
+        
+        container.appendChild(formGroup);
+      });
+      
+      // Bind remove platform events
+      document.querySelectorAll('.remove-platform').forEach(button => {
+        button.addEventListener('click', function() {
+          const platformKey = this.closest('.platform-form-group').querySelector('input').getAttribute('data-platform');
+          selectedPlatforms = selectedPlatforms.filter(key => key !== platformKey);
+          initPlatformInputs();
+          showToast('Platform removed', 'info');
+        });
+      });
+    }
+
+    // Create share link
+    function createShareLink() {
+      // Collect all filled platform links
+      const platformInputs = document.querySelectorAll('#socialPlatformsList input');
+      const platforms = [];
+      
+      platformInputs.forEach(input => {
+        const platformKey = input.getAttribute('data-platform');
+        const platformUrl = input.value.trim();
+        
+        if (platformUrl) {
+          platforms.push({
+            platform: platformKey,
+            url: platformUrl
+          });
+        }
+      });
+      
+      // Check if there are platform links
+      if (platforms.length === 0) {
+        showToast('Please add at least one platform link.', 'error');
+        return null;
+      }
+      
+      // For demonstration purposes, create a mock share link
+      // In a real application, data may be sent to the server and a short link returned
+      const data = JSON.stringify(platforms);
+      const encodedData = btoa(unescape(encodeURIComponent(data)));
+      
+      // Use the current domain as the base, replace with your service domain in a real application
+      return `${window.location.origin}/profile/${encodedData}`;
+    }
+
+    // Generate QR code
+    function generateQRCode(link) {
+      const qrcodeElement = document.getElementById('qrcode');
+      qrcodeElement.innerHTML = ''; // Clear existing content
+      
+      new QRCode(qrcodeElement, {
+        text: link,
+        width: 192,
+        height: 192,
+        colorDark: "#ffffff",
+        colorLight: "rgba(0,0,0,0)",
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    }
+
+    // Show prompt message
+    function showToast(message, type = 'info') {
+      // Create toast element
+      const toast = document.createElement('div');
+      
+      // Set style and content
+      let bgColor = 'bg-info';
+      let icon = 'fa-info-circle';
+      
+      if (type === 'success') {
+        bgColor = 'bg-success';
+        icon = 'fa-check-circle';
+      } else if (type === 'error') {
+        bgColor = 'bg-danger';
+        icon = 'fa-exclamation-circle';
+      } else if (type === 'warning') {
+        bgColor = 'bg-warning';
+        icon = 'fa-exclamation-triangle';
+      }
+      
+      toast.className = `fixed bottom-4 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-lg ${bgColor} text-white shadow-lg flex items-center z-50 animate-fade-in`;
+      toast.innerHTML = `
+        <i class="fa ${icon} mr-2"></i>
+        <span>${message}</span>
+      `;
+      
+      // Add to page
+      document.body.appendChild(toast);
+      
+      // Remove after 3 seconds
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translate(-50%, 20px)';
+        toast.style.transition = 'opacity 0.3s, transform 0.3s';
+        
+        setTimeout(() => {
+          document.body.removeChild(toast);
+        }, 300);
+      }, 3000);
+    }
+
+    // Start the process
+    async function start() {
+      try {
+        // Display initial network status
+        updateNetworkStatus();
+        
+        // Load background resources
+        await preloadCriticalResources();
+        
+        // Initialize platform cards
+        initPlatformCards();
+        
+        // Set up event listeners
+        setupEventListeners();
+        
+        // Show welcome prompt
+        setTimeout(() => {
+          showToast('Welcome to the After-sales Service Card!', 'info');
+        }, 1000);
+      } catch (error) {
+        console.error('Startup error:', error);
+        console.error('Error stack:', error.stack); // Output error stack information
+        showToast('Initialization failed, please refresh the page.', 'error');
+      }
+    }
+
+    // Start after page load
+    window.addEventListener('load', start);
   </script>
 </body>
 </html>
