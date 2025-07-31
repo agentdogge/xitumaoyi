@@ -92,6 +92,16 @@
       .text-balance {
         text-wrap: balance;
       }
+      /* 新增样式，确保模态框内内容正确显示 */
+      .social-media-modal-link {
+        @apply flex flex-col md:flex-row justify-between items-center space-y-2 md:space-y-0;
+      }
+      .social-media-modal-link .btn-platform {
+        @apply whitespace-nowrap;
+      }
+      .modal-responsive {
+        @apply max-w-md w-full md:max-w-lg lg:max-w-xl; /* 增加模态框最大宽度 */
+      }
     }
   </style>
 </head>
@@ -113,7 +123,7 @@
   <!-- Authorization modal -->
   <div id="authorizationModal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
     <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
-    <div class="relative bg-white/10 rounded-xl p-6 max-w-md w-full glass-effect animate-fade-in">
+    <div class="relative bg-white/10 rounded-xl p-6 modal-responsive glass-effect animate-fade-in">
       <div class="flex justify-end">
         <button id="closeAuthModal" class="text-gray-400 hover:text-white transition-colors">
           <i class="fa fa-times text-xl"></i>
@@ -140,7 +150,7 @@
   <!-- Social media account form -->
   <div id="socialMediaForm" class="fixed inset-0 z-50 flex items-center justify-center hidden">
     <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
-    <div class="relative bg-white/10 rounded-xl p-6 max-w-md w-full glass-effect animate-fade-in">
+    <div class="relative bg-white/10 rounded-xl p-6 modal-responsive glass-effect animate-fade-in">
       <div class="flex justify-between items-center mb-6">
         <h3 class="text-xl font-bold">Enter your social media account</h3>
         <button id="closeSocialMediaForm" class="text-gray-400 hover:text-white transition-colors">
@@ -166,7 +176,7 @@
   <!-- Platform selector modal -->
   <div id="platformSelectorModal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
     <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
-    <div class="relative bg-white/10 rounded-xl p-6 max-w-md w-full glass-effect animate-fade-in">
+    <div class="relative bg-white/10 rounded-xl p-6 modal-responsive glass-effect animate-fade-in">
       <div class="flex justify-between items-center mb-6">
         <h3 class="text-xl font-bold">Choose platform</h3>
         <button id="closePlatformSelector" class="text-gray-400 hover:text-white transition-colors">
@@ -174,7 +184,7 @@
         </button>
       </div>
       
-      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
+      <div class="grid grid-cols-3 md:grid-cols-4 gap-3 mb-6"> <!-- 增加网格列数使布局更宽 -->
         <button class="platform-btn" data-platform="facebook">
           <div class="w-full p-3 bg-facebook/10 rounded-lg text-center">
             <i class="fa fa-facebook text-facebook text-xl mb-1"></i>
@@ -228,7 +238,7 @@
   <!-- Share link modal -->
   <div id="shareLinkModal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
     <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
-    <div class="relative bg-white/10 rounded-xl p-6 max-w-md w-full glass-effect animate-fade-in">
+    <div class="relative bg-white/10 rounded-xl p-6 modal-responsive glass-effect animate-fade-in">
       <div class="flex justify-between items-center mb-6">
         <h3 class="text-xl font-bold">Share your contact information</h3>
         <button id="closeShareLinkModal" class="text-gray-400 hover:text-white transition-colors">
@@ -271,7 +281,7 @@
   <!-- View social media accounts modal -->
   <div id="viewSocialMediaModal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
     <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
-    <div class="relative bg-white/10 rounded-xl p-6 max-w-md w-full glass-effect animate-fade-in">
+    <div class="relative bg-white/10 rounded-xl p-6 modal-responsive glass-effect animate-fade-in">
       <div class="flex justify-between items-center mb-6">
         <h3 class="text-xl font-bold">Check social media accounts</h3>
         <button id="closeSocialMediaModal" class="text-gray-400 hover:text-white transition-colors">
@@ -291,27 +301,27 @@
     </div>
   </div>
 
-  <main class="container mx-auto px-4 py-8 max-w-6xl">
+  <main class="container mx-auto px-4 py-8 max-w-7xl"> <!-- 增加主容器最大宽度约15px -->
     <!-- Page title -->
     <section class="text-center mb-12 animate-fade-in">
       <h2 class="text-[clamp(1.8rem,4vw,3rem)] font-bold mb-4 gradient-text from-primary to-secondary">
         After-sales service card
       </h2>
-      <p class="text-gray-300 max-w-2xl mx-auto text-balance">
+      <p class="text-gray-300 max-w-3xl mx-auto text-balance"> <!-- 增加描述文本容器宽度 -->
         You can quickly contact us through the link below.
       </p>
      
     </section>
     
     <!-- Platform grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5" id="socialPlatforms">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5" id="socialPlatforms"> <!-- 增加最大列数 -->
       <!-- Platform cards will be dynamically generated via JavaScript -->
     </div>
 
     <!-- Recommended content -->
     <div class="mt-12">
       <h3 class="text-xl font-bold mb-6">Recommended content</h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6"> <!-- 保持两列布局 -->
         <div class="glass-effect rounded-xl overflow-hidden card-hover">
           <div class="h-48 bg-gray-700 relative">
             <img src="https://picsum.photos/id/1018/800/600" alt="Social media tips" class="w-full h-full object-cover">
@@ -476,7 +486,7 @@
       
       // Load adaptive background image
       const img = new Image();
-      img.src = 'images/fixebike1.jpg';
+      img.src = getBackgroundImage();
       
       return new Promise((resolve, reject) => {
         img.onload = () => {
@@ -559,14 +569,14 @@
           linksContainer.innerHTML = '';
           
           const platformCard = document.createElement('div');
-          platformCard.className = 'glass-effect rounded-lg p-4';
+          platformCard.className = 'glass-effect rounded-lg p-4 social-media-modal-link';
           
           // Find platform color
           const platform = socialPlatforms.find(p => p.name === platformName);
           const color = platform ? platform.color : 'primary';
           
           platformCard.innerHTML = `
-            <div class="flex items-center">
+            <div class="flex items-center flex-grow">
               <div class="w-10 h-10 rounded-lg bg-${color}/20 flex items-center justify-center mr-3">
                 <i class="fa fa-${platform ? platform.icon : 'link'} text-${color} text-xl"></i>
               </div>
@@ -574,13 +584,16 @@
                 <h4 class="font-bold">${platformName}</h4>
                 <p class="text-gray-400 text-sm truncate">${platformUrl}</p>
               </div>
-              <a href="${platformUrl}" target="_blank" class="btn-platform bg-${color} text-xs px-3 py-1">
-                Visit
-              </a>
             </div>
+            <a href="${platformUrl}" target="_blank" class="btn-platform bg-${color} text-xs px-3 py-1">
+              Visit
+            </a>
           `;
           
           linksContainer.appendChild(platformCard);
+
+          // 动态调整模态框大小
+          adjustModalHeight('viewSocialMediaModal');
         });
       });
     }
@@ -595,6 +608,8 @@
       }
       shareContactBtn.addEventListener('click', function() {
         document.getElementById('authorizationModal').classList.remove('hidden');
+        // 动态调整模态框大小
+        adjustModalHeight('authorizationModal');
       });
       
       // Authorization modal
@@ -617,6 +632,9 @@
         // Auto-focus on the first input field
         const firstInput = document.querySelector('#socialMediaForm input');
         if (firstInput) firstInput.focus();
+
+        // 动态调整模态框大小
+        adjustModalHeight('socialMediaForm');
       });
       
       authorizeNo.addEventListener('click', function() {
@@ -658,6 +676,9 @@
             
             // Success prompt
             showToast('The sharing link has been generated!', 'success');
+
+            // 动态调整模态框大小
+            adjustModalHeight('shareLinkModal');
           }
         }, 800);
       });
@@ -670,6 +691,8 @@
       }
       addPlatformBtn.addEventListener('click', function() {
         document.getElementById('platformSelectorModal').classList.remove('hidden');
+        // 动态调整模态框大小
+        adjustModalHeight('platformSelectorModal');
       });
       
       // Platform selector
@@ -934,6 +957,47 @@
       }, 3000);
     }
 
+    // 动态调整模态框大小
+    function adjustModalHeight(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) {
+        const modalContent = modal.querySelector('.glass-effect');
+        if (modalContent) {
+          // 重置高度以获取正确的scrollHeight
+          modalContent.style.height = 'auto';
+          modalContent.style.maxHeight = '90vh';
+          
+          // 获取内容高度
+          const contentHeight = modalContent.scrollHeight;
+          
+          // 获取视口高度
+          const viewportHeight = window.innerHeight;
+          
+          // 如果内容高度大于视口的90%，则设置最大高度
+          if (contentHeight > viewportHeight * 0.9) {
+            modalContent.style.height = '90vh';
+            modalContent.style.overflowY = 'auto';
+          } else {
+            modalContent.style.height = `${contentHeight}px`;
+            modalContent.style.overflowY = 'visible';
+          }
+        }
+      }
+    }
+
+    // 响应式处理
+    function handleResponsive() {
+      // 监听窗口大小变化，重新调整模态框
+      window.addEventListener('resize', () => {
+        const modals = ['authorizationModal', 'socialMediaForm', 'platformSelectorModal', 'shareLinkModal', 'viewSocialMediaModal'];
+        modals.forEach(modalId => {
+          if (!document.getElementById(modalId).classList.contains('hidden')) {
+            adjustModalHeight(modalId);
+          }
+        });
+      });
+    }
+
     // Start the process
     async function start() {
       try {
@@ -948,6 +1012,9 @@
         
         // Set up event listeners
         setupEventListeners();
+        
+        // 设置响应式处理
+        handleResponsive();
         
         // Show welcome prompt
         setTimeout(() => {
